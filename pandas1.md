@@ -81,3 +81,42 @@ df.reset_index()  # index 값들이 1개의 열로 이동
 df.sort_index(ascending=False)  # index를 기준으로 내림차순 정렬(ascending=True라면 오름차순)
 ```
 
+## DataFrame 사칙연산
+- `DataFrame`에 일반 사칙연산을 하면 모든 요소에 사칙연산이 적용됨.
+- `DataFrame` + `int` or `float` 등 연산이 가능.
+- `DataFrame` + `DataFrame` 간의 연산 가능.
+```python
+import seaborn as sns
+
+
+data = sns.load_dataset('titanic')
+df = data.loc[:, ['age', 'fare']]
+addition = df + 10  # 모든 age와 fare 값에 10을 더함
+sub = addition - df  # addition 데이터프레임에 df 데이터프레임의 모든 값으로 빼기
+```
+
+## DataFrame의 내용 미리보기
+- `head()` or `tail()` 을 통해 `DataFrame`의 값을 미리 볼 수 있다.
+- `DataFrame`의 크기(행, 열)을 확인하고 각 열의 값의 개수를 확인할 수 있다.
+- `describe()`와 `info()` 메서드를 통해 통계값, 요약 정보를 확인할 수 있다.
+```python
+df.head(10)  # 맨 앞 10개의 데이터 읽어오기
+df.tail(10)  # 맨 뒤 10개의 데이터 읽어오기
+df.shape  # (row, colums) 형태로 출력
+df.count()  # 각 열의 값 개수를 알수 있음
+df.info()  # 각 열의 개수와 데이터 타입 그리고 null값의 개수를 확인 가능
+df.describe()  # 각 열 값의 개수, 평균, 표준편차, 최대, 최소 값들을 한번에 볼 수 있음 (include='all'은 더 자세한 값들을 볼수 있음)
+```
+
+## 통계 함수 적용하기
+- 각종 통계 함수를 이용해서 각 열의 통계값을 쉽게 구할 수 있음.
+- `['col_name']`을 이용해서 해당 열의 통계값만을 구할 수 있음.
+```python
+df.mean()  # 평균
+df.std()  # 표준편차
+df.median()  # 중간값
+df.min()  # 최소값
+df.max()  # 최대값
+df.corr()  # 상관계수
+```
+
