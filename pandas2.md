@@ -28,7 +28,7 @@ plt.ylabel('Moving population')  # y축 라벨
 plt.legend(labels=['Seoul -> Gyungi'], loc='best')  # 범례 표시
 plt.show()
 ```
-![](D:\PandasStudy\img\Figure_1.png)
+![](https://github.com/KangJuSeong/PandasStudy/blob/main/img/Figure_1.png)
 
 2. 그래프 스타일
    - `marker='o'`, `markersize=size` 를 통해 해당 값에 마커를 찍을 수 있음.
@@ -73,7 +73,7 @@ plt.annotate('Reduced population(1995-2017)',  #텍스트 입력
              )
 plt.show()
 ```
-![](D:\PandasStudy\img\Figure_2.png)
+![](https://github.com/KangJuSeong/PandasStudy/blob/main/img/Figure_2.png)
 
 3. 여러 그래프 그리기
    - 화면을 분할하여 여러 개 그래프를 그릴 수 있음.
@@ -100,7 +100,7 @@ ax2.set_xticklabels(sr_one.index, rotation=75)
 
 plt.show()
 ```   
-![](D:\PandasStudy\img\Figure_3.png)
+![](https://github.com/KangJuSeong/PandasStudy/blob/main/img/Figure_3.png)
 
 4. 동일한 그림에 여러개의 그래프 추가
    - 동일한 그림에 여러개의 그래프를 추가할 수 있음.
@@ -129,5 +129,5 @@ ax.tick_params(axis='y', labelsize=10)
 
 plt.show()
 ```   
-![](D:\PandasStudy\img\Figure_4.png)
+![](https://github.com/KangJuSeong/PandasStudy/blob/main/img/Figure_4.png)
 
