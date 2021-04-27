@@ -60,4 +60,84 @@ plt.show()
 ![](https://github.com/KangJuSeong/PandasStudy/blob/main/img/Figure_9.png)
 
 ### 5. 산점도
-- 
+- 산점도는 서로 다른 두 변수 사이의 관계를 나타냄.
+- 각 변수는 연속되는 값을 갖고, 일반적으로 정수형 또는 실수형 값임.
+- 2개의 연속 변수를 각각 x축과 y축에 하나씩 놓고, 데이터 값이 위치하는 (x, y) 좌표를 찾아서 점으로 표시.
+```python
+df = pd.read_csv('auto-mpg.csv', header=None)
+df.columns = ['mpg', 'cylinders', 'displacement', 'horsepower', 'weight',
+              'acceleration', 'model year', 'origin', 'name']
+
+# msg와 weight에 관한 산점도 그리기, kind는 sccater(산점도), x와 y에 각각 값 대입
+# s=cylinders_size, alpha=0.3 을 추가하면 점의 크기 증가 및 투명도는 0.3
+df.plot(kind='scatter', x='weight', y='mpg', c='coral', figsize=(10, 5))
+        #,s=cylinders_size, alpha=0.3)
+
+plt.title('Scatter Plot - mgp vs weight')
+plt.xlabel('weight')
+plt.ylabel('mpg')
+plt.show()
+```
+![](https://github.com/KangJuSeong/PandasStudy/blob/main/img/Figure_10.png)
+
+### 6. 파이 차트
+- 원을 파이 조각처럼 나누어서 표현.
+- 조각의 크기는 해당 변수에 속하는 데이터 값의 크기에 비례.
+```python
+import pandas as pd
+import matplotlib.pyplot as plt
+
+
+df = pd.read_csv('auto-mpg.csv', header=None)
+df.columns = ['mpg', 'cylinders', 'displacement', 'horsepower', 'weight',
+              'acceleration', 'model year', 'origin', 'name']
+
+print(df.info())
+df['count'] = 1  # 각 origin 의 개수를 파악하기 위해 추가
+df_origin = df.groupby('origin').sum()  # origin을 기준으로 모든 정수, 실수 값들의 합 구하기
+df_origin.index = ['USA', 'EU', 'JPN']  # 순서대로 origin이 1, 2, 3이 각각 USA, EU, JPN
+
+df_origin['count'].plot(kind='pie',  # 그래프 모형을 파이
+                        figsize=(7, 5),
+                        autopct='%1.1f%%',  # 퍼센트 표시
+                        startangle=10,  # 파이 조각을 나누는 시작점(각도 표시)
+                        colors=['chocolate', 'bisque', 'cadetblue'])  # 색상 리스트
+plt.title('Model Origin', size=20)
+plt.axis('equal')  # 파이 차트의 비율을 같게 조정(원에 가깝게)
+plt.legend(labels=df_origin.index, loc='upper right')  # 범례 표시
+plt.show()
+```
+![](https://github.com/KangJuSeong/PandasStudy/blob/main/img/Figure_11.png)
+
+### 7. 박스 플롯
+- 박스 플롯은 범주형 데이터의 분포를 파악하는데 적합.
+- 박스 플롯에서는 통계값(최대값, 중간값, 최소값 등)을 표현하는데 최적화됨.
+```python
+import pandas as pd
+import matplotlib.pyplot as plt
+
+
+df = pd.read_csv('auto-mpg.csv', header=None)
+df.columns = ['mpg', 'cylinders', 'displacement', 'horsepower', 'weight',
+              'acceleration', 'model year', 'origin', 'name']
+
+fig = plt.figure(figsize=(15, 5))
+ax1 = fig.add_subplot(1, 2, 1)
+ax2 = fig.add_subplot(1, 2, 2)
+
+ax1.boxplot(x=[df[df['origin'] == 1]['mpg'],
+               df[df['origin'] == 2]['mpg'],
+               df[df['origin'] == 3]['mpg']],
+            labels=['USA', 'EU', 'JAPAN'])
+
+ax2.boxplot(x=[df[df['origin'] == 1]['mpg'],
+               df[df['origin'] == 2]['mpg'],
+               df[df['origin'] == 3]['mpg']],
+            labels=['USA', 'EU', 'JAPAN'],
+            vert=False)
+
+ax1.set_title('Distribution of fuel economy by country of manufacture (vertical)')
+ax2.set_title('Distribution of fuel economy by country of manufacture (no vertical)')
+plt.show()
+```
+![](https://github.com/KangJuSeong/PandasStudy/blob/main/img/Figure_12.png)
