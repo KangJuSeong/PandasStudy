@@ -30,9 +30,9 @@ plt.show()
 ```
 ![](D:\PandasStudy\img\Figure_1.png)
 2. 그래프 스타일
-    - `marker='o'`, `markersize=size` 를 통해 해당 값에 마커를 찍을 수 있음.
-    - `annotate()` 메서드를 이용하여 그래프 내부에 주석을 표시할 수 있음.
-    - 매개변수 `size`를 통해 fontsize를 조절할 수 있음.
+   - `marker='o'`, `markersize=size` 를 통해 해당 값에 마커를 찍을 수 있음.
+   - `annotate()` 메서드를 이용하여 그래프 내부에 주석을 표시할 수 있음.
+   - 매개변수 `size`를 통해 fontsize를 조절할 수 있음.
 ```python
 plt.figure(figsize=(14, 8))  # 그래프 사이즈 지정 가로 14, 세로 5인치
 plt.xticks(size=10, rotation='vertical')  # xlabel 수직으로 표현
