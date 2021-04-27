@@ -5,7 +5,7 @@
 
 ### 1. 선 그래프
 1. 그래프 그리기
-    - 선을 이용하여 데이터 통계를 그래프로 표현.
+   - 선을 이용하여 데이터 통계를 그래프로 표현.
 ```python
 import pandas as pd
 import matplotlib.pyplot as plt
@@ -75,10 +75,10 @@ plt.show()
 ![](D:\PandasStudy\img\Figure_2.png)
 
 3. 여러 그래프 그리기
-    - 화면을 분할하여 여러 개 그래프를 그릴 수 있음.
-    - `axe` 객체를 만들고, 분할된 화면마다 `axe` 객체를 하나씩 배정.
-    - `figure()`함수를 사용하여 그래프를 그리는 틀을 만든다.
-    - 해당 `figure()`에 `add_subplot()`메서드를 이용하여 그래프를 넣는다.
+   - 화면을 분할하여 여러 개 그래프를 그릴 수 있음.
+   - `axe` 객체를 만들고, 분할된 화면마다 `axe` 객체를 하나씩 배정.
+   - `figure()`함수를 사용하여 그래프를 그리는 틀을 만든다.
+   - 해당 `figure()`에 `add_subplot()`메서드를 이용하여 그래프를 넣는다.
 ```python
 fig = plt.figure(figsize=(10, 10))  # 그래프 틀 생성, 사이즈는 10x10
 ax1 = fig.add_subplot(2, 1, 1)  # 그래프 생성
