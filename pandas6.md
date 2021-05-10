@@ -301,13 +301,145 @@ group3f = grouped_two.get_group(('Third', 'female'))
 #### 2. 그룹 연산 메소드(적용-결합 단계)
 - 각 그룹에 데이터들을 집계할 수 있음.
 - 각 그룹의 연산의 결과를 원본 `DataFrame`과 같은 형태로 변형하여 정리하는 것이 가능.
+- `agg()` 메소드를 이용하여 집계 연산을 처리하는 사용자 정의 함수를 그룹 객체에 적용 가능.  
 - 그룹 객체에 `filter()` 메소드를 적용하여 조건이 참인 그룹만 추출 가능.
 - 그룹 객체에 `apply()` 메소드를 이용하여 개별 원소를 특정 함수에 일대일로 매핑이 가능.
 ```python
+import pandas as pd
+import seaborn as sns
 
+
+pd.set_option('display.max_columns', 10)
+pd.set_option('display.max_colwidth', 20)
+pd.set_option('display.unicode.east_asian_width', True)
+
+titanic = sns.load_dataset('titanic')
+df = titanic.loc[:, ['age', 'sex', 'class', 'fare', 'survived']]
+
+# class를 기준으로 그룹화
+grouped = df.groupby(['class'])
+
+# 각 그룹에 대한 모든 열의 표준편차를 집계하여 데이터프레임으로 변환
+std_all = grouped.std()
+# 선택한 열에 대한 연산
+std_fare = grouped.fare.std()
+# agg() 메소드를 이용한 데이터 집계
+def min_max(x):
+    return x.max() - x.min()
+
+agg_minmax = grouped.agg(min_max)
+
+# 여러 함수를 각 열에 동일하게 적용하여 집계
+agg_all = grouped.agg(['min', 'max'])
+agg_sep = grouped.agg({'fare': ['min', 'max'], 'age': 'mean'})
+
+# 그룹 연산 데이터 변환
+age_mean = grouped.age.mean()
+age_std = grouped.age.std()
+
+for key, group in grouped.age:
+    group_zscore = (group - age_mean.loc[key]) / age_std.loc[key]
+    print('* origin :', key)
+    print(group_zscore.head(3))
+    print('\n')
+
+# transform() 메소드를 사용하여 데이터 변환
+def z_score(x):
+    return (x - x.mean()) / x.std()
+
+age_zscore = grouped.age.transform(z_score)
+print(age_zscore.loc[[1, 9, 0]])
+print(len(age_zscore))
+print(age_zscore.loc[0:9])
+
+# 그룹 객체 필터링
+# 그룹의 데이터가 200개 이상인 그룹의 데이터만 출력
+grouped_filter = grouped.filter(lambda x: len(x) >= 200)
+print(grouped_filter.head())
+# 그룹의 데이터의 age 평균이 30보다 작은 그룹의 데이터들만 출력
+age_filter = grouped.filter(lambda x: x.age.mean() < 30)
+print(age_filter.head())
+
+# 그룹 객체에 함수 매핑
+# 각 그룹별 describe() 함수 실행
+agg_grouped = grouped.apply(lambda x: x.describe())
+print(agg_grouped)
+# z-score를 계산하는 함수 적용
+age_zscore = grouped.age.apply(z_score)
+print(age_zscore.head())
+
+# filter에서 해당되지 않는 그룹은 false 해당되면 true로 저장
+age_filter = grouped.apply(lambda x: x.age.mean() < 30)
+print(age_filter)
+for x in age_filter.index:
+    if age_filter[x]:
+        age_filter_df = grouped.get_group(x)
+        print(age_filter_df.head())
 ```
 
 ### 6. 멀티 인덱스
-
+- `groupby()`메소드에 여러 열을 리스트 형태로 전달하면 각 열들이 다중으로 행 인덱스를 구성하는 것이 멀티 인덱스.
+- `Pandas`는 행 인덱스를 여러 레벨로 구현할 수 있도록 멀티 인덱스 클래스를 지원.
+```python
+grouped = df.groupby(['class', 'sex'])
+gdf = grouped.mean()
+# 전체 보기
+print(gdf)
+# 특정 그룹 선택
+print(gdf.loc['First'])
+# 튜플 형태를 이용하여 두 가지 그룹 선택
+print(gdf.loc[('First', 'female')])
+# xs인덱서 사용
+print(gdf.xs('male', level='sex'))
+```
 
 ### 7. 피벗
+- `pibot_table()`함수는 액셀에서 사용하는 피벗테이블과 비슷한 기능을 처리.
+- 피벗테이블을 구성하는 4가지 요소(행 인덱스, 열 인덱스, 데이터 값, 데이터 집계 함수)에 적용할 데이터프레임의 열을 각각 지정하여 함수의 인자로 전달.
+```python
+import pandas as pd
+import seaborn as sns
+
+
+pd.set_option('display.max_columns', 10)  # 출력할 최대 열의 개수
+pd.set_option('display.max_colwidth', 20)  # 출력할 열의 너비
+
+titanic = sns.load_dataset('titanic')
+df = titanic.loc[:, ['age', 'sex', 'class', 'fare', 'survived']]
+
+pdf1 = pd.pivot_table(df,              # 피벗할 데이터프레임
+                      index='class',   # 행 위치에 들어갈 열
+                      columns='sex',   # 열 위치에 들어갈 열
+                      values='age',    # 데이터로 사용할 열
+                      aggfunc='mean')  # 데이터 집계 함수
+print(pdf1.head())
+pdf2 = pd.pivot_table(df,
+                      index='class',
+                      columns='sex',
+                      values='survived',
+                      aggfunc=['mean', 'sum'])
+print(pdf2.head())
+pdf3 = pd.pivot_table(df,
+                      index=['class', 'sex'],
+                      columns='survived',
+                      values=['age', 'fare'],
+                      aggfunc=['mean', 'max'])
+print(pdf3.head())
+# pdf3의 행을 선택하기 위해 xs 인덱서 사용
+print(pdf3.xs('First'))
+# First이면서 female인 데이터 가져오기
+print(pdf3.xs(('First', 'female')))
+# 행 인덱스의 sex 레벨이 male인 행을 선택
+print(pdf3.xs('male', level='sex'))
+# Second, male 인 행을 선택
+print(pdf3.xs(('Second', 'male'), level=[0, 'sex']))
+# xs 인덱서를 사용하여 열을 선택하고 열 인덱스가 mean인 데이터를 선택
+print(pdf3.xs('mean', axis=1))
+# 열 인덱스가 ('mean', 'age')인 데이터 선택
+print(pdf3.xs(('mean', 'age'), axis=1))
+# 열 인덱스 레벨을 직접 지정
+print(pdf3.xs(1, level='survived', axis=1))
+# 열 인덱스 레벨0 에서 최대값을 나타내는 'max'를 가져오고, 레벨 1에서 객실요금을 나타내는 'fare'를 가져오기
+print(pdf3.xs(('max', 'fare', 0), level=[0, 1, 2], axis=1))
+
+```
